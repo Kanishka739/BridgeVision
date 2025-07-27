@@ -1,8 +1,10 @@
+import os
+os.environ['OPENCV_IO_ENABLE_OPENEXR'] = '0'
+
 import streamlit as st
 from PIL import Image
 import numpy as np
 from ultralytics import YOLO
-import os
 import io
 import base64
 
@@ -77,11 +79,30 @@ with st.sidebar:
     """)
     st.write("---")
 
-# Load the custom YOLOv8 model
-model_path = r"C:\Users\Kanishka\Desktop\vscode\BridgeVision\weights\best.pt"
-print("Exists?", os.path.exists(model_path))
-model = YOLO(model_path)
+# Load the custom YOLOv8 model with error handling
+@st.cache_resource
+def load_model():
+    try:
+        # Use relative path for deployment
+        model_path = "weights/best.pt"
+        
+        # Check if custom model exists
+        if os.path.exists(model_path):
+            st.sidebar.success("✅ Custom model loaded successfully!")
+            return YOLO(model_path)
+        else:
+            # Fallback to pre-trained model
+            st.sidebar.warning("⚠️ Custom model not found. Using pre-trained YOLOv8 model.")
+            st.sidebar.info("To use your custom model, add 'weights/best.pt' to your repository.")
+            return YOLO('yolov8n.pt')  # This will download automatically
+            
+    except Exception as e:
+        st.sidebar.error(f"❌ Error loading model: {str(e)}")
+        st.sidebar.info("Using pre-trained YOLOv8 model as fallback.")
+        return YOLO('yolov8n.pt')
 
+# Load the model
+model = load_model()
 
 # History in session state (store list of dicts with image and result)
 if "history" not in st.session_state:
@@ -123,9 +144,9 @@ if uploaded_file is not None:
 
     # Extract detected classes and confidences
     boxes = results[0].boxes
+    data = []  # Initialize data as empty list
     if boxes is not None and len(boxes) > 0:
         st.subheader("Detections")
-        data = []
         for box in boxes:
             cls_id = int(box.cls.cpu())
             conf = float(box.conf.cpu())
@@ -143,7 +164,7 @@ if uploaded_file is not None:
         {
             "original": image,
             "annotated": annotated_pil,
-            "detections": data if boxes is not None else [],
+            "detections": data,
         }
     )
 
