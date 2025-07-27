@@ -59,20 +59,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Dark mode toggle in sidebar
-if "dark_mode" not in st.session_state:
-    st.session_state.dark_mode = False
-
-def toggle_dark_mode():
-    st.session_state.dark_mode = not st.session_state.dark_mode
-
 st.sidebar.title("⚙️ Settings")
-st.sidebar.checkbox("Dark Mode", value=st.session_state.dark_mode, on_change=toggle_dark_mode)
-
-if st.session_state.dark_mode:
-    st.markdown('<body data-theme="dark">', unsafe_allow_html=True)
-else:
-    st.markdown('<body data-theme="light">', unsafe_allow_html=True)
 
 # App Title & description
 st.markdown('<div class="main-container">', unsafe_allow_html=True)
@@ -90,9 +77,11 @@ with st.sidebar:
     """)
     st.write("---")
 
-# Load model once
-model_path = "C:/Users/Kanishka/Desktop/vscode/DRDO/runs/detect/train2/weights/best.pt"
+# Load the custom YOLOv8 model
+model_path = r"C:\Users\Kanishka\Desktop\vscode\BridgeVision\weights\best.pt"
+print("Exists?", os.path.exists(model_path))
 model = YOLO(model_path)
+
 
 # History in session state (store list of dicts with image and result)
 if "history" not in st.session_state:
