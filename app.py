@@ -138,9 +138,9 @@ if uploaded_file is not None:
     # Show side-by-side images
     col1, col2 = st.columns(2)
     with col1:
-        st.image(image, caption="Original Image", use_container_width=True)
+        st.image(image, caption="Original Image", use_column_width=True)
     with col2:
-        st.image(annotated_pil, caption="Detected Damage", use_container_width=True)
+        st.image(annotated_pil, caption="Detected Damage", use_column_width=True)
 
     # Extract detected classes and confidences
     boxes = results[0].boxes
@@ -174,8 +174,8 @@ if len(st.session_state.history) > 0:
     st.subheader("🕘 History (Last uploads)")
     for i, item in enumerate(st.session_state.history[-3:][::-1], 1):
         cols = st.columns(3)
-        cols[0].image(item["original"], caption=f"Original #{i}", use_container_width=True)
-        cols[1].image(item["annotated"], caption=f"Annotated #{i}", use_container_width=True)
+        cols[0].image(item["original"], caption=f"Original #{i}", use_column_width=True)
+        cols[1].image(item["annotated"], caption=f"Annotated #{i}", use_column_width=True)
         if item["detections"]:
             cols[2].write("Detections:")
             for det in item["detections"]:
