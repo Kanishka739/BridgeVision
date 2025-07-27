@@ -6,4 +6,5 @@ torchvision==0.17.2
 torchaudio==2.2.2
 numpy==1.26.4
 gdown==4.7.1
-opencv-python==4.9.0.80
+opencv-python-headless
+
